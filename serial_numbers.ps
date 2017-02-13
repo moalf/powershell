@@ -1,0 +1,14 @@
+function Get-Inventory {
+      PROCESS {
+        $computer = $_
+            $bios = get-wmiobject win32_bios -computerName $computer
+            $serial = $bios.serialnumber
+
+            $obj = New-Object psobject
+            $obj | Add-Member NoteProperty ComputerName $computer
+            $obj | Add-Member NoteProperty BIOSSerial $serial
+        Write-Output $obj
+      }
+}
+
+get-content c:\COMPUTERS.TXT | Get-Inventory

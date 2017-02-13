@@ -1,0 +1,18 @@
+$main_hosts = Get-Content "C:\Users\Admin\Documents\PoSh\Main_Hosts.txt"
+$result = $TRUE
+
+Foreach ($machine in $main_hosts) {
+    $result = Test-Connection -ComputerName $machine -Quiet
+    if ($result -eq $FALSE) {
+        Add-Content -Path "C:\Users\Admin\Documents\PoSh\Hosts_Down.txt" -Value $machine
+        $result = $TRUE
+        $anydown = $TRUE
+    }
+}
+
+if ($anydown -eq $TRUE) { 
+     Send-MailMessage -SmtpServer "smtp.yourdomain.com" -to "admin@domain.com" -from "email@domain.com" 
+          -Subject "Network Hosts Down" -Body "Please, examine attached file for non reachable hosts on the network."
+          -Attachments "C:\Users\Admin\Documents\PoSh\Hosts_Down.txt" 
+}
+Clear-Content "C:\Users\Admin\Documents\PoSh\Hosts_Down.txt"
